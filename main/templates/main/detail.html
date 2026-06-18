@@ -1,0 +1,475 @@
+{% extends 'main/base.html' %}
+{% block title %}
+{{ good.product.title }} - Petal & Bloom
+{% endblock %}
+{% block main %}
+  <!-- ══ PRODUCT HERO ══ -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Знаходимо наші кнопки та поле з цифрою
+    const btnMinus = document.getElementById('qtyMinus');
+    const btnPlus = document.getElementById('qtyPlus');
+    const inputNum = document.getElementById('qtyNum');
+
+    // Перевіряємо, чи є вони на сторінці (щоб скрипт не видавав помилок на інших сторінках)
+    if (btnMinus && btnPlus && inputNum) {
+
+        // Дія для плюса
+        btnPlus.addEventListener('click', function() {
+            let currentValue = parseInt(inputNum.value);
+            let max = parseInt(inputNum.getAttribute('max')) || 99; // Беремо максимум з HTML
+
+            if (currentValue < max) {
+                inputNum.value = currentValue + 1;
+            }
+        });
+
+        // Дія для мінуса
+        btnMinus.addEventListener('click', function() {
+            let currentValue = parseInt(inputNum.value);
+            let min = parseInt(inputNum.getAttribute('min')) || 1; // Беремо мінімум з HTML
+
+            if (currentValue > min) {
+                inputNum.value = currentValue - 1;
+            }
+        });
+    }
+});
+
+</script>
+<div class="product-hero" xmlns="http://www.w3.org/1999/html">
+
+    <!-- Gallery -->
+    <div class="gallery">
+      <div class="gallery-main" id="mainImg">
+
+        <span id="mainEmoji"></span>
+        <div class="gallery-main-overlay"><img src="{{ good.img.url }}" alt="" style="height: 100%; width: 100%; "></div>
+        {% if good.orders >= 25 %}
+              <span class="gallery-badge">Хіт продажів</span>
+              {% elif good.is_new %}
+              <span class="gallery-badge" style="background-color: lightcoral">Новинка</span>
+        {% else %}
+        <span class="gallery-badge" style="background-color: lightskyblue">На замовлення</span>
+              {% endif %}
+        <div class="gallery-zoom-hint">🔍 Збільшити</div>
+
+      </div>
+      {% if good.product.type == 'Букет' %}
+      <div class="gallery-thumbs">
+        {% for variant in available_sizes %}
+        <div class="thumb {% if variant.id == good.id %}active{% endif %}" style="display: inline-block"><a href="{% url 'good-detail' variant.slug %}"><img src="{{ variant.img.url }}" alt="" style="width: 100%; height: 100%;object-fit: cover;object-position: center;display: block;"></a></div>
+          {% endfor %}
+        </div>
+        {% else %}
+      <div class="gallery-thumbs">
+        {% for variant in available_colors %}
+        <div class="thumb {% if variant.id == good.id %}active{% endif %}"><a href="{% url 'good-detail' variant.slug %}"><img src="{{ variant.img.url }}" alt="" style="width: 100%; height: 100%;object-fit: cover;object-position: center;display: block;"></a></div>
+          {% endfor %}
+
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Info -->
+    <div class="product-info">
+      <div class="product-tag">
+        {% if good.quantity < 1 %}
+        <span class="product-tag-dot"></span>Немає в наявності
+        {% else %}
+        <span class="product-tag-dot"></span>В наявності · Доставка сьогодні
+        {% endif %}
+      </div>
+
+      <h1 class="product-title">{{ good.product.type }}<br><em>{{ good.product.title }}</em></h1>
+      <div class="product-rating">
+        <span style="font-size:13px;color:var(--green-mid);">{{ good.orders }} продажів</span>
+      </div>
+
+      <div class="price-block">
+        <span class="price-main">{{ good.price }}</span>
+        <span class="price-currency">грн</span>
+        {% if good.old_price > good.price %}
+        <span class="price-old">{{ good.old_price }}</span>
+        <span class="price-save">-{{ good.discount }}%</span>
+        {% endif %}
+      </div>
+
+      {% if good.product.type == 'Букет' %}
+      <div class="option-group">
+        <div class="option-label">
+          Розмір букету
+          <span class="option-chosen" id="sizeLabel">{{ good.size }}</span>
+        </div>
+        <div class="size-options">
+          {% for variant in available_sizes %}
+          <a href="{% url 'good-detail' variant.slug %}" style="text-decoration: none">
+          <button class="size-btn {% if variant.id == good.id %}active{% endif %}">
+            {% if variant.size.name == '9 шт' %}Міні{% elif variant.size.name == '15 шт' %}Cтандарт{% elif variant.size.name == '25 шт' %}Святковий{% elif variant.size.name == '51 шт' %}Люкс{% endif %}<small>{{ variant.size.name }}</small>
+          </button>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+      <!-- Color -->
+      <div class="option-group">
+    <div class="option-label">КОЛІР:</div>
+    <div class="color-options-grid">
+        {% for variant in  available_colors %}
+            <a href="{% url 'good-detail' variant.slug %}"
+               class="color-opt {% if variant.id == good.id %}active{% endif %}">
+                <span class="color-name">{{ variant.color.name }}</span>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+      <form action="{% url 'bin' good.slug %}" method="POST" class="add-to-cart-form">
+    {% csrf_token %}
+      <div class="buy-row">
+        <div class="qty-control">
+          <button type="button" class="qty-btn" id="qtyMinus" aria-label="Зменшити">-</button>
+          <input class="qty-num" id="qtyNum" name="quantity" type="number" value="1" min="1" max="{{ good.quantity }}" readonly />
+          <button type="button" class="qty-btn" id="qtyPlus" aria-label="Збільшити">+</button>
+        </div>
+
+
+    <button type="submit" class="btn-cart-lg" {% if good.quantity <= 0 %}disabled{% endif %}>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cart-btn-icon">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+    Додати в кошик
+</button>
+
+<button type="submit" class="btn-buy-now" formmethod="get" formaction="{% url 'buy' good.slug %}" {% if good.quantity <= 0 %}disabled{% endif %}>
+    ⚡ Купити зараз
+</button>
+
+</form>
+
+      </div>
+
+      <!-- Chips -->
+      <div class="delivery-chips">
+        <div class="chip"><span class="chip-icon"><i class="fa-solid fa-car-side"></i></span>Доставка за 2 год.</div>
+        <div class="chip"><span class="chip-icon"><i class="fa-solid fa-location-dot"></i></span>По всьому місту</div>
+        <div class="chip"><span class="chip-icon"><i class="fa-solid fa-certificate"></i></span>Гарантія свіжості</div>
+        <div class="chip"><span class="chip-icon"><i class="fa-solid fa-envelope-open"></i></span>Листівка в подарунок</div>
+        <div class="chip"><span class="chip-icon"><i class="fa-regular fa-credit-card"></i></span>Оплата після отримання</div>
+      </div>
+    </div>
+  </div><!-- /product-hero -->
+
+  <!-- ══ TABS ══ -->
+  <div class="product-tabs-section">
+    <nav class="tabs-nav" role="tablist">
+      <button class="tab-nav-btn active" data-tab="description" role="tab" aria-selected="true">Опис</button>
+
+    </nav>
+
+    <!-- Description -->
+    <div class="tab-panel active" id="tab-description" role="tabpanel">
+      <div class="desc-grid" >
+        <div class="desc-text "  >
+          {{ good.descr }}
+        </div>
+        <div class="desc-features">
+          <div class="desc-feature">
+            <span class="desc-feature-icon"><span class="material-symbols-outlined" style="font-size: 34px">deceased</span></span>
+            <div>
+              <div class="desc-feature-title">Свіжий зріз щодня</div>
+              <div class="desc-feature-text">Квіти надходять з ферм Еквадору та Голландії — максимальна свіжість гарантована</div>
+            </div>
+          </div>
+          <div class="desc-feature">
+            <span class="desc-feature-icon"><span class="material-symbols-outlined">
+content_cut
+</span></span>
+            <div>
+              <div class="desc-feature-title">Ручна робота флориста</div>
+              <div class="desc-feature-text">Кожен букет збирається вручну досвідченим флористом — жодного конвеєра</div>
+            </div>
+          </div>
+          <div class="desc-feature">
+            <span class="desc-feature-icon"><i class="fa-solid fa-box-open"></i></span>
+            <div>
+              <div class="desc-feature-title">Фірмова упаковка</div>
+              <div class="desc-feature-text">Крафт, органза або коробка — на ваш вибір, безкоштовно</div>
+            </div>
+          </div>
+          <div class="desc-feature">
+            <span class="desc-feature-icon"><i class="fa-solid fa-calendar-days"></i></span>
+            <div>
+              <div class="desc-feature-title">Стоїть до 14 днів</div>
+              <div class="desc-feature-text">При правильному догляді квіти зберігають свіжість 10–14 днів</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Composition -->
+    <div class="tab-panel" id="tab-composition" role="tabpanel">
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;margin-bottom:24px;color:var(--text-dark);">
+        Склад букету
+      </h3>
+      <div class="composition-grid">
+        <div class="comp-item">
+          <div class="comp-emoji">🌹</div>
+          <div>
+            <div class="comp-name">Троянди Freedom / Explorer</div>
+            <div class="comp-detail">15 стеблин · Еквадор / Голландія</div>
+          </div>
+        </div>
+        <div class="comp-item">
+          <div class="comp-emoji">🌿</div>
+          <div>
+            <div class="comp-name">Евкаліпт кінгіанум</div>
+            <div class="comp-detail">3–5 гілок · зелений декор</div>
+          </div>
+        </div>
+        <div class="comp-item">
+          <div class="comp-emoji">🪴</div>
+          <div>
+            <div class="comp-name">Еустома біла</div>
+            <div class="comp-detail">5 гілок · акцент</div>
+          </div>
+        </div>
+        <div class="comp-item">
+          <div class="comp-emoji">🎀</div>
+          <div>
+            <div class="comp-name">Атласна стрічка</div>
+            <div class="comp-detail">Колір на вибір</div>
+          </div>
+        </div>
+        <div class="comp-item">
+          <div class="comp-emoji">📄</div>
+          <div>
+            <div class="comp-name">Крафтовий папір / органза</div>
+            <div class="comp-detail">Преміум упаковка</div>
+          </div>
+        </div>
+        <div class="comp-item">
+          <div class="comp-emoji">💌</div>
+          <div>
+            <div class="comp-name">Листівка з підписом</div>
+            <div class="comp-detail">До 150 символів — безкоштовно</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;margin-bottom:20px;color:var(--text-dark);">
+        Догляд за трояндами
+      </h3>
+      <div class="care-list">
+        <div class="care-card">
+          <div class="care-icon">✂️</div>
+          <div class="care-title">Підрізайте стебла</div>
+          <div class="care-desc">Кожні 2 дні зрізайте 1–2 см під кутом 45°</div>
+        </div>
+        <div class="care-card">
+          <div class="care-icon">💧</div>
+          <div class="care-title">Свіжа вода щодня</div>
+          <div class="care-desc">Кімнатна, відстояна вода. Уникайте прямих сонячних променів</div>
+        </div>
+        <div class="care-card">
+          <div class="care-icon">🌡️</div>
+          <div class="care-title">Температура 18–22°C</div>
+          <div class="care-desc">Не ставте поруч з фруктами та обігрівачами</div>
+        </div>
+        <div class="care-card">
+          <div class="care-icon">🌬️</div>
+          <div class="care-title">Уникайте протягів</div>
+          <div class="care-desc">Різкий вітер прискорює зів'янення</div>
+        </div>
+        <div class="care-card">
+          <div class="care-icon">🫧</div>
+          <div class="care-title">Мийте вазу</div>
+          <div class="care-desc">Кожні 2 дні промивайте вазу теплою водою</div>
+        </div>
+        <div class="care-card">
+          <div class="care-icon">💊</div>
+          <div class="care-title">Живлення для квітів</div>
+          <div class="care-desc">Використовуйте саше з нашого набору або 1 ч.л. цукру</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delivery -->
+    <div class="tab-panel" id="tab-delivery" role="tabpanel">
+      <div class="delivery-grid">
+        <div class="delivery-card">
+          <div class="delivery-card-icon">🚗</div>
+          <div class="delivery-card-title">Кур'єрська доставка</div>
+          <div class="delivery-card-text">
+            Доставляємо по місту протягом 2 годин після підтвердження замовлення. 
+            Кур'єр зателефонує за 30 хвилин до прибуття. 
+            Доставка в зручний для вас час: з 8:00 до 22:00 щодня.
+          </div>
+          <div class="delivery-card-price">від 80 грн</div>
+        </div>
+        <div class="delivery-card">
+          <div class="delivery-card-icon">🏪</div>
+          <div class="delivery-card-title">Самовивіз</div>
+          <div class="delivery-card-text">
+            Заберіть букет самостійно в нашому магазині за адресою: 
+            вул. Садова, 12. Магазин відкритий щодня з 8:00 до 21:00.
+            Готовність букету — 1–2 години після замовлення.
+          </div>
+          <div class="delivery-card-price">Безкоштовно</div>
+        </div>
+        <div class="delivery-card">
+          <div class="delivery-card-icon">💳</div>
+          <div class="delivery-card-title">Оплата</div>
+          <div class="delivery-card-text">
+            Готівкою при отриманні, карткою Visa / Mastercard онлайн або 
+            при доставці, а також через Apple Pay, Google Pay та ПриватБанк. 
+            Можлива передоплата 50% для великих замовлень.
+          </div>
+          <div class="delivery-card-price">Будь-який зручний спосіб</div>
+        </div>
+        <div class="delivery-card">
+          <div class="delivery-card-icon">🔄</div>
+          <div class="delivery-card-title">Гарантія та повернення</div>
+          <div class="delivery-card-text">
+            Якщо квіти не відповідають опису або пошкоджені — замінимо 
+            безкоштовно протягом 24 годин. Просто надішліть фото у чат. 
+            Ваша задоволеність — наш пріоритет.
+          </div>
+          <div class="delivery-card-price">Гарантія 100%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews -->
+    <div class="tab-panel" id="tab-reviews" role="tabpanel">
+      <div class="reviews-summary">
+        <div class="big-rating">
+          <div class="big-rating-num">4.9</div>
+          <div class="big-stars">★★★★★</div>
+          <div class="big-count">128 відгуків</div>
+        </div>
+        <div class="rating-bars">
+          <div class="bar-row">
+            <span class="bar-label">5</span>
+            <div class="bar-track"><div class="bar-fill" style="width:88%;"></div></div>
+            <span class="bar-pct">88%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">4</span>
+            <div class="bar-track"><div class="bar-fill" style="width:9%;background:var(--green-pale);"></div></div>
+            <span class="bar-pct">9%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">3</span>
+            <div class="bar-track"><div class="bar-fill" style="width:2%;background:var(--green-pale);"></div></div>
+            <span class="bar-pct">2%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">2</span>
+            <div class="bar-track"><div class="bar-fill" style="width:1%;background:var(--accent-blush);"></div></div>
+            <span class="bar-pct">1%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">1</span>
+            <div class="bar-track"><div class="bar-fill" style="width:0%;"></div></div>
+            <span class="bar-pct">0%</span>
+          </div>
+        </div>
+        <div style="font-size:13px;color:var(--text-light);max-width:200px;line-height:1.7;">
+          Один з найпопулярніших букетів нашого магазину вже 3 роки поспіль 🌹
+        </div>
+      </div>
+
+      <div class="reviews-list">
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-author">
+              <div class="review-avatar">👩</div>
+              <div>
+                <div class="review-name">Оксана Петренко</div>
+                <div class="review-date">12 березня 2024</div>
+              </div>
+            </div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <div class="review-text">
+            «Замовляла для мами на день народження — вона в захваті! Букет прийшов
+            вчасно, упакований дуже гарно, троянди свіжі та пахучі. Стояли майже
+            2 тижні. Однозначно замовлятиму ще!»
+          </div>
+          <div class="review-verified">✓ Підтверджена покупка</div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-author">
+              <div class="review-avatar">👨</div>
+              <div>
+                <div class="review-name">Андрій Коваленко</div>
+                <div class="review-date">8 березня 2024</div>
+              </div>
+            </div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <div class="review-text">
+            «Замовив дружині на 8 березня, взяв люкс 51 троянда. Доставили
+            вчасно, листівку написали гарним почерком. Дружина плакала від
+            щастя — значить, усе зробили правильно 🌹»
+          </div>
+          <div class="review-verified">✓ Підтверджена покупка</div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-author">
+              <div class="review-avatar">👩‍💼</div>
+              <div>
+                <div class="review-name">Марина Іваненко</div>
+                <div class="review-date">14 лютого 2024</div>
+              </div>
+            </div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <div class="review-text">
+            «Уже четверте замовлення в цьому магазині і завжди залишаюсь
+            задоволеною. Сервіс на вищому рівні, флористи — справжні
+            майстри своєї справи. Рекомендую всім!»
+          </div>
+          <div class="review-verified">✓ Підтверджена покупка</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /product-tabs-section -->
+
+  <!-- ══ RELATED ══ -->
+  <section class="related-section">
+    <div class="related-inner">
+      <div class="section-label">Також популярне</div>
+      <h2 class="section-title">Вам може<br><em>сподобатись</em></h2>
+
+      <div class="related-grid">
+
+    {% for g in goods %}
+        <a href="{% url 'good-detail' g.slug %}" class="related-card">
+          <div class="related-img" style="background:#fff0f5;">
+           <img src="{{ g.img.url }}" alt="" style="width: 100%">
+            <div class="related-img-overlay"></div>
+          </div>
+          <div class="related-body">
+            <div class="related-meta">{{ g.product.short_descr }} · {{ g.style }}</div>
+            <div class="related-name">{{ g.product.type }}{{ g.product.title }}</div>
+            <div class="related-price">{{ g.price }} грн</div>
+          </div>
+        </a>
+
+{% endfor %}
+        </div>
+  </section>
+
+
+{% endblock %}

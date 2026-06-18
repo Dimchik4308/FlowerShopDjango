@@ -1,0 +1,67 @@
+{% extends 'main/base.html' %}
+{% block title %}Реєстрація - Petal & Bloom{% endblock %}
+
+{% block main %}
+<style>
+  :root {
+    --green-deep: #2d5a3d; --green-mid: #4a7c5f; --green-soft: #7aab8a;
+    --green-pale: #c8e0d0; --green-tint: #eef6f1; --cream: #faf8f4;
+    --warm-white: #ffffff; --text-dark: #1e2d25; --text-mid: #4a5e52;
+    --text-light: #8aa094; --accent-rose: #d4826a; --accent-blush: #f5e6e0;
+    --border-light: rgba(200,224,208,.55);
+    --radius-md: 14px; --radius-lg: 24px; --radius-pill: 999px;
+    --shadow-card: 0 12px 40px rgba(45,90,61,.08);
+    --transition: .3s cubic-bezier(.4,0,.2,1);
+  }
+
+  .auth-wrapper { min-height: 85vh; display: flex; align-items: center; justify-content: center; padding: 60px 20px; background: var(--cream); }
+
+  /* Картка реєстрації трохи ширша */
+  .auth-card { background: var(--warm-white); border-radius: var(--radius-lg); border: 1px solid var(--border-light); box-shadow: var(--shadow-card); padding: 48px 40px; max-width: 480px; width: 100%; text-align: center; animation: fadeUp .6s ease both; }
+
+  .auth-icon { font-size: 42px; margin-bottom: 12px; }
+  .auth-title { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 300; color: var(--text-dark); margin-bottom: 12px; line-height: 1.2; }
+  .auth-title em { font-style: italic; color: var(--green-mid); }
+  .auth-desc { font-size: 14px; color: var(--text-mid); line-height: 1.6; margin-bottom: 32px; }
+
+  /* Form Styles */
+  .auth-form { text-align: left; }
+  .auth-form p { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .auth-form label { font-size: 11px; font-weight: 600; color: var(--text-mid); text-transform: uppercase; letter-spacing: .06em; }
+  .auth-form input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border-light); border-radius: var(--radius-md); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-dark); background: var(--cream); outline: none; transition: all var(--transition); }
+  .auth-form input:focus { border-color: var(--green-soft); background: var(--warm-white); box-shadow: 0 0 0 4px var(--green-tint); }
+
+  /* Стилізація підказок і помилок Django */
+  .auth-form .helptext { font-size: 11px; color: var(--text-light); margin-top: -4px; line-height: 1.4; padding-left: 4px; }
+  .auth-form ul.errorlist { color: var(--accent-rose); font-size: 12px; list-style: none; padding: 0; margin-top: -4px; background: var(--accent-blush); padding: 8px 12px; border-radius: 8px; }
+
+  .btn-auth { display: block; width: 100%; padding: 14px 24px; border-radius: var(--radius-pill); background: var(--green-deep); color: #fff; border: none; cursor: pointer; text-align: center; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; transition: all var(--transition); text-decoration: none; margin-top: 24px; }
+  .btn-auth:hover { background: var(--green-mid); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(45,90,61,.2); }
+
+  .auth-footer { margin-top: 24px; font-size: 13px; color: var(--text-light); border-top: 1px solid var(--border-light); padding-top: 20px; }
+  .auth-footer a { color: var(--green-deep); font-weight: 500; text-decoration: none; transition: color var(--transition); }
+  .auth-footer a:hover { color: var(--green-mid); text-decoration: underline; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+    
+    <h2 class="auth-title">Створити <em>акаунт</em></h2>
+    <p class="auth-desc">Приєднуйтесь до нас, щоб зберігати історію замовлень та отримувати персональні пропозиції.</p>
+
+    <form action="{% url 'register' %}" method="post" class="auth-form">
+      {% csrf_token %}
+
+      {{ form.as_p }}
+
+      <button type="submit" class="btn-auth">Зареєструватися</button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Вже є акаунт? <a href="{% url 'login' %}">Увійти</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

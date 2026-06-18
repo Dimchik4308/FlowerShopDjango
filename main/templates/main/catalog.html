@@ -1,0 +1,386 @@
+{% extends 'main/base.html' %}
+
+
+{% block title %}
+    Квіти - Petal & Bloom
+{% endblock %}
+{% block main %}
+{% url 'custom' as custom %}
+    {% url 'ready' as ready %}
+    {% url 'additions' as additions_url %}
+{% if request.path == custom %}
+
+  <div class="page-hero">
+    <div class="page-hero-deco left">✨</div>
+    <div class="page-hero-deco right">🌹</div>
+    <div class="page-hero-label">Каталог</div>
+    <h1><em>Індивідуальні</em> букети</h1>
+    <p>Ваш особистий флорист створить унікальну композицію за вашими побажаннями</p>
+  </div>
+{% elif request.path == ready %}
+<div class="page-hero">
+    <div class="page-hero-deco left">🌷</div>
+    <div class="page-hero-deco right">🌸</div>
+    <div class="page-hero-label">Каталог</div>
+    <h1>Готові <em>букети</em></h1>
+    <p>Ретельно підібрані композиції, готові до доставки вже сьогодні</p>
+  </div>
+{% else %}
+<div class="page-hero">
+    <div class="page-hero-deco left">🌷</div>
+    <div class="page-hero-deco right">🌸</div>
+    <div class="page-hero-label">Каталог</div>
+    <h1>Додатки до <em>букетів</em></h1>
+    <p>Прикраси для ваших квіточок</p>
+  </div>
+{% endif %}
+  <div class="type-switcher-wrap">
+    <div class="type-switcher">
+      <a href="{% url 'ready' %}" class="type-btn {% if request.path == ready %} active {% endif %}">
+        <span class="tb-icon"><span class="material-symbols-outlined">local_florist</span></span>Готові букети
+      </a>
+      <a href="{% url 'custom' %}" class="type-btn {% if request.path == custom %} active {% endif %}">
+        <span class="tb-icon"><span class="material-symbols-outlined">spa</span></span>Квіти
+      </a>
+      <a href="{% url 'additions' %}" class="type-btn {% if request.path == additions_url %} active {% endif %}">
+        <span class="tb-icon"><i class="fa-solid fa-boxes-packing"></i></span>Інше
+      </a>
+    </div>
+  </div>
+
+  <div class="catalog-layout">
+
+    <aside class="catalog-aside">
+    {% if request.path == custom %}
+        <form action="{% url 'custom' %}" method="GET" id="filter-form">
+      <div class="aside-section" style="margin-bottom: 30px">
+  <div class="aside-section-title"><span class="material-symbols-outlined">spa</span>Квіти</div>
+  <nav class="aside-list">
+    {% for flower in flowers %}
+      <label class="flower-filter-item">
+        <input type="checkbox" name="flower" value="{{ flower.id }}"
+               {% if flower.id|stringformat:"i" in selected_flowers %}checked{% endif %}
+               style="display: none" onchange="this.form.submit()">
+
+        <div class="aside-item {% if flower.id|stringformat:'i' in selected_flowers %}active{% endif %}" tabindex="0">
+          <span class="aside-item-left">
+      {{ flower.title }}
+          </span>
+        </div>
+      </label>
+    {% endfor %}
+  </nav>
+</div>
+    <div class="aside-section">
+        <div class="aside-section-title"><span><i class="fa-solid fa-palette"></i></span> Гама кольорів</div>
+
+        <div class="aside-colors">
+    {% for color in colors %}
+    <label class="color-filter-item">
+        <!-- Схований чекбокс -->
+        <input type="checkbox" name="color" value="{{ color.id }}"
+               id="color_{{ color.id }}"
+               {% if color.id|stringformat:"i" in selected_colors %}checked{% endif %} style="display: none;">
+        <div class="color-swatch "
+             title="{{ color.name|slice:'2:' }}">
+            {{ color.name|slice:':1' }}
+        </div>
+    </label>
+    {% endfor %}
+</div>
+
+        <button class="aside-apply">Застосувати</button>
+        <button type="button" class="aside-apply" onclick="window.location.href = window.location.pathname;">
+    Очистити фільтри
+</button>
+     </div>
+    </form>
+    {% elif request.path == ready %}
+        <form action="{% url 'ready' %}" method="GET" id="filter-form">
+
+    <div class="aside-section">
+        <div class="aside-section-title"><span><i class="fa-regular fa-calendar-days"></i></span> Події</div>
+        <nav class="aside-list" aria-label="Фільтр за подією">
+          <label class="aside-item {% if request.GET.event == 'Без приводу' %}active{% endif %}" tabindex="0">
+        <input type="radio" name="event" value="Без приводу"
+               {% if request.GET.event == 'Без приводу' %}checked{% endif %}
+               style="display: none;" onchange="this.form.submit()">
+<div class="aside-item" tabindex="0">
+            <span class="aside-item-left"><span class="aside-emoji"></span>Без приводу</span>
+          </div>    </label>
+            <label class="aside-item {% if request.GET.event == 'Побачення' %}active{% endif %}" tabindex="0">
+        <input type="radio" name="event" value="Побачення"
+               {% if request.GET.event == 'Побачення' %}checked{% endif %}
+               style="display: none;" onchange="this.form.submit()">
+<div class="aside-item" tabindex="0">
+            <span class="aside-item-left"><span class="aside-emoji"></span>Побачення</span>
+          </div>    </label>
+            <label class="aside-item {% if request.GET.event == 'День народження' %}active{% endif %}" tabindex="0">
+        <input type="radio" name="event" value="День народження"
+               {% if request.GET.event == 'День народження' %}checked{% endif %}
+               style="display: none;" onchange="this.form.submit()">
+<div class="aside-item" tabindex="0">
+            <span class="aside-item-left"><span class="aside-emoji"></span>День народження</span>
+          </div>    </label>
+
+        </nav>
+      </div>
+
+<div class="aside-section">
+        <div class="aside-section-title"><span><i class="fa-solid fa-palette"></i></span> Гама кольорів</div>
+
+        <div class="aside-colors">
+    {% for color in colors %}
+    <label class="color-filter-item">
+        <!-- Схований чекбокс -->
+        <input type="checkbox" name="color" value="{{ color.id }}"
+               id="color_{{ color.id }}"
+               {% if color.id|stringformat:"i" in selected_colors %}checked{% endif %} style="display: none;">
+        <div class="color-swatch "
+             title="{{ color.name|slice:'2:' }}">
+            {{ color.name|slice:':1' }}
+        </div>
+    </label>
+    {% endfor %}
+</div>
+
+        <button class="aside-apply">Застосувати</button>
+        <button type="button" class="aside-apply" onclick="window.location.href = window.location.pathname;">
+    Очистити фільтри
+</button>
+     </div>
+
+<div class="aside-section">
+    <div class="aside-section-title"><span><i class="fa-solid fa-ruler-combined"></i></span> Розмір букету</div>
+        <nav class="aside-list">
+    <label class="aside-item {% if request.GET.size == '9 шт' %}active{% endif %}" tabindex="0">
+        <input type="radio" name="size" value="9 шт"
+               {% if request.GET.size == '9 шт' %}checked{% endif %}
+               style="display: none;" onchange="this.form.submit()">
+<div class="aside-item" tabindex="0">
+            <span class="aside-item-left"><span class="aside-emoji"></span>Міні (9 стеблин)</span>
+          </div>    </label>
+            <label class="aside-item {% if request.GET.size == '15 шт' %}active{% endif %}" tabindex="0">
+        <input type="radio" name="size" value="15 шт"
+               {% if request.GET.size == '15 шт' %}checked{% endif %}
+               style="display: none;" onchange="this.form.submit()">
+<div class="aside-item" tabindex="0">
+            <span class="aside-item-left"><span class="aside-emoji"></span>Стандарт (15 стеблин)</span>
+          </div>    </label>
+            <label class="aside-item {% if request.GET.size == '25 шт' %}active{% endif %}" tabindex="0">
+        <input type="radio" name="size" value="25 шт"
+               {% if request.GET.size == '25 шт' %}checked{% endif %}
+               style="display: none;" onchange="this.form.submit()">
+<div class="aside-item" tabindex="0">
+            <span class="aside-item-left"><span class="aside-emoji"></span>Святковий (25 стеблин)</span>
+          </div>    </label>
+            <label class="aside-item {% if request.GET.size == '51 шт' %}active{% endif %}" tabindex="0">
+        <input type="radio" name="size" value="51 шт"
+               {% if request.GET.size == '51 шт' %}checked{% endif %}
+               style="display: none;" onchange="this.form.submit()">
+<div class="aside-item" tabindex="0">
+            <span class="aside-item-left"><span class="aside-emoji"></span>Люкс (51 стеблина)</span>
+          </div>    </label>
+        </nav>
+    <nav class="aside-list">
+            <div class="aside-section-title"><span><i class="fa-regular fa-money-bill-1"></i></span>Ціновий діапазон</div>
+
+    <!-- До 500 грн -->
+    <label class="aside-item {% if request.GET.price_range == '0-500' %}active{% endif %}" tabindex="0">
+        <input type="radio" name="price_range" value="0-500"
+               {% if request.GET.price_range == '0-500' %}checked{% endif %}
+               style="display: none;" onchange="this.form.submit()">
+        <span class="aside-item-left">до 500 грн</span>
+    </label>
+
+    <!-- 500 – 1 500 грн -->
+    <label class="aside-item {% if request.GET.price_range == '500-1500' %}active{% endif %}" tabindex="0">
+        <input type="radio" name="price_range" value="500-1500"
+               {% if request.GET.price_range == '500-1500' %}checked{% endif %}
+               style="display: none;" onchange="this.form.submit()">
+        <span class="aside-item-left">500 – 1 500 грн</span>
+    </label>
+
+    <!-- 1 500 – 3 000 грн -->
+    <label class="aside-item {% if request.GET.price_range == '1500-3000' %}active{% endif %}" tabindex="0">
+        <input type="radio" name="price_range" value="1500-3000"
+               {% if request.GET.price_range == '1500-3000' %}checked{% endif %}
+               style="display: none;" onchange="this.form.submit()">
+        <span class="aside-item-left">1 500 – 3 000 грн</span>
+    </label>
+
+    <!-- від 3 000 грн -->
+    <label class="aside-item {% if request.GET.price_range == '3000-100000' %}active{% endif %}" tabindex="0">
+        <input type="radio" name="price_range" value="3000-100000"
+               {% if request.GET.price_range == '3000-100000' %}checked{% endif %}
+               style="display: none;" onchange="this.form.submit()">
+        <span class="aside-item-left">від 3 000 грн</span>
+    </label>
+</nav>
+      </div>
+
+        </form>
+{% else %}
+        <form action="{% url 'additions' %}" method="GET" id="filter-form">
+
+       <div class="aside-section">
+        <div class="aside-section-title"><span><i class="fa-solid fa-palette"></i></span> Гама кольорів</div>
+
+        <div class="aside-colors">
+    {% for color in colors %}
+    <label class="color-filter-item">
+        <!-- Схований чекбокс -->
+        <input type="checkbox" name="color" value="{{ color.id }}"
+               id="color_{{ color.id }}"
+               {% if color.id|stringformat:"i" in selected_colors %}checked{% endif %} style="display: none;">
+        <div class="color-swatch "
+             title="{{ color.name|slice:'2:' }}">
+            {{ color.name|slice:':1' }}
+        </div>
+    </label>
+    {% endfor %}
+</div>
+
+        <button class="aside-apply">Застосувати</button>
+        <button type="button" class="aside-apply" onclick="window.location.href = window.location.pathname;">
+    Очистити фільтри
+</button>
+     </div>
+        {% endif %}
+
+        </form>
+
+
+    </aside>
+
+    <!-- ── MAIN ── -->
+    <main class="catalog-main">
+
+      <div class="catalog-toolbar">
+          
+          {% if request.path == custom %}
+        <p class="catalog-count">Види квітів: <strong>{{ length }}</strong></p>
+          {% elif request.path == ready %}
+          <p class="catalog-count">Букетів: <strong>{{ length }}</strong></p>
+          {% else %}
+          <p class="catalog-count">Додатків: <strong>{{ length }}</strong></p>
+          {% endif %}
+          {% if request.path == ready %}
+          <form action="{% url 'ready' %}" method="GET" id="sort-form">
+
+    <div class="toolbar-right">
+        <select name="sort" class="sort-select" aria-label="Сортування товарів" onchange="this.form.submit()">
+
+            <option value="">Сортувати за...</option>
+
+            <option value="-orders" {% if request.GET.sort == '-orders' %}selected{% endif %}>
+                За популярністю
+            </option>
+
+            <option value="price" {% if request.GET.sort == 'price' %}selected{% endif %}>
+                Від дешевих до дорогих
+            </option>
+
+            <option value="-price" {% if request.GET.sort == '-price' %}selected{% endif %}>
+                Від дорогих до дешевих
+            </option>
+
+        </select>
+    </div>
+</form>
+          {% elif request.path == custom %}
+          <form action="{% url 'custom' %}" method="GET" id="sort-form">
+
+    <div class="toolbar-right">
+        <select name="sort" class="sort-select" aria-label="Сортування товарів" onchange="this.form.submit()">
+
+            <option value="">Сортувати за...</option>
+
+            <option value="-orders" {% if request.GET.sort == '-orders' %}selected{% endif %}>
+                За популярністю
+            </option>
+
+            <option value="price" {% if request.GET.sort == 'price' %}selected{% endif %}>
+                Від дешевих до дорогих
+            </option>
+
+            <option value="-price" {% if request.GET.sort == '-price' %}selected{% endif %}>
+                Від дорогих до дешевих
+            </option>
+
+        </select>
+    </div>
+</form>
+{% elif request.path == additions_url %}
+          <form action="{% url 'additions' %}" method="GET" id="sort-form">
+
+    <div class="toolbar-right">
+        <select name="sort" class="sort-select" aria-label="Сортування товарів" onchange="this.form.submit()">
+
+            <option value="">Сортувати за...</option>
+
+            <option value="-orders" {% if request.GET.sort == '-orders' %}selected{% endif %}>
+                За популярністю
+            </option>
+
+            <option value="price" {% if request.GET.sort == 'price' %}selected{% endif %}>
+                Від дешевих до дорогих
+            </option>
+
+            <option value="-price" {% if request.GET.sort == '-price' %}selected{% endif %}>
+                Від дорогих до дешевих
+            </option>
+
+        </select>
+    </div>
+</form>
+
+          {% endif %}
+      </div>
+      <div class="products-grid" id="productGrid">
+          {% for g in variants %}
+
+<article class="product-card insp-card">
+<a href="{% url 'good-detail' g.slug %} " style="text-decoration: none">
+          <div class="card-img" style="background:#fff0f5; aspect-ratio: 1/1.3;">
+            <img src="{{ g.img.url }}" alt="Фото" style="width: 100%; height: 100%; object-fit: cover; justify-content: center">
+            <div class="card-img-overlay"></div>
+              {% if g.orders >= 25 %}
+              <span class="card-badge badge-order" style="background-color: lightcoral">Хіт продажів</span>
+              {% elif g.is_new %}
+                  <span class="card-badge badge-order" style="background-color: darkorange">Новинка</span>
+              {% else %}
+            <span class="card-badge badge-order">На замовлення</span>
+              {% endif %}
+            <div class="card-actions">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-category">{{ .product.short_descr  }}</div>
+            <div class="card-name">{{ g.product.title }}</div>
+            <div class="card-meta">{{ g.color.name }}<span class="card-meta-dot"></span>{{ g.style }}</div>
+            <div class="card-footer">
+              <div class="card-price-wrap">
+                <span style="font-size:12px;color:var(--text-light);">від </span>
+                <span class="card-price">{{ g.price }}</span>
+                <span class="card-price-unit"> грн</span>
+              </div>
+                <form action="{% url 'buy' g.slug %}" method="get" >
+            {% csrf_token %}
+              <button class="btn-cart open-modal" type="submit">Замовити</button>
+                </form>
+            </div>
+          </div>
+</a>
+        </article>
+
+    {% endfor %}
+
+      </div>
+
+
+
+    </main>
+  </div>
+
+{% endblock %}

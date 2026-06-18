@@ -1,0 +1,134 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+Успішна підписка - Petal & Bloom
+{% endblock %}
+
+{% block main %}
+<style>
+    .success-page {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #fafaf7;
+        padding: 40px 20px;
+    }
+
+    .success-card {
+        background: #ffffff;
+        max-width: 600px;
+        width: 100%;
+        padding: 70px 50px;
+        border-radius: 24px;
+        text-align: center;
+        box-shadow: 0 15px 50px rgba(42, 77, 58, 0.04);
+    }
+
+    .success-icon {
+        width: 80px;
+        height: 80px;
+        background-color: #f0f4f2;
+        color: #1e3b2b;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 35px auto;
+    }
+
+    .success-icon svg {
+        width: 36px;
+        height: 36px;
+    }
+
+    .success-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 44px;
+        font-weight: 300;
+        color: #1e3b2b;
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+
+    .success-title em {
+        font-style: italic;
+        color: #4a7c59;
+    }
+
+    .success-desc {
+        font-size: 16px;
+        color: #666666;
+        line-height: 1.6;
+        margin-bottom: 45px;
+        max-width: 450px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .success-actions {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .btn-success-solid {
+        display: inline-block;
+        background-color: #1e3b2b;
+        color: #ffffff;
+        padding: 16px 36px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        border: 1px solid #1e3b2b;
+    }
+
+    .btn-success-solid:hover {
+        background-color: #15291e;
+        color: #ffffff;
+    }
+
+    .btn-success-outline {
+        display: inline-block;
+        background-color: transparent;
+        color: #1e3b2b;
+        padding: 16px 36px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        border: 1px solid #1e3b2b;
+    }
+
+    .btn-success-outline:hover {
+        background-color: #f0f4f2;
+    }
+</style>
+
+<div class="success-page">
+    <div class="success-card">
+        <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+        </div>
+        
+        <h1 class="success-title">Успішна<br><em>підписка!</em></h1>
+        
+        <p class="success-desc">
+            Дякуємо, що ви з нами. Тепер ви першими дізнаватиметеся про наші квіткові новинки, свіжі поставки та секретні акції для своїх.
+        </p>
+        
+        <div class="success-actions">
+            <a href="{% url 'ready' %}" class="btn-success-solid">Перейти в каталог</a>
+            <a href="/" class="btn-success-outline">На головну</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

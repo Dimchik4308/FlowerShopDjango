@@ -1,0 +1,321 @@
+{% extends 'main/base.html' %}
+{% block title %}
+Головна - Petal & Bloom
+{% endblock %}
+{% load static %}
+{% block main %}
+  <!-- ══ HERO ══ -->
+  <section class="hero" style="padding-top:0;">
+    <div class="hero-left">
+      <div class="hero-tag">
+        <span></span>Свіжі квіти щодня
+      </div>
+      <h1 class="hero-title">
+        Подаруй<br>
+        <em>красу</em><br>
+        природи
+      </h1>
+      <p class="hero-desc">
+        Вишукані букети та квіткові композиції для кожного моменту. 
+        Від ніжних троянд до екзотичних орхідей — ми створюємо емоції 
+        через квіти.
+      </p>
+      <div class="hero-cta">
+        <a href="{% url 'ready' %}" class="btn-primary btn-lg">Переглянути каталог</a>
+        <a href="#about" class="btn-outline btn-lg">Наша історія</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">500+</div>
+          <div class="stat-label">Видів квітів</div>
+        </div>
+        <div>
+          <div class="stat-num">12k</div>
+          <div class="stat-label">Щасливих клієнтів</div>
+        </div>
+        <div>
+          <div class="stat-num">10 р.</div>
+          <div class="stat-label">На ринку</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <!-- Decorative floating elements -->
+      <div class="hero-deco hero-deco-1">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="12" fill="#4a7c5f" opacity=".5"/>
+          <ellipse cx="40" cy="20" rx="8" ry="14" fill="#7aab8a" opacity=".6" transform="rotate(0 40 40)"/>
+          <ellipse cx="40" cy="20" rx="8" ry="14" fill="#7aab8a" opacity=".6" transform="rotate(60 40 40)"/>
+          <ellipse cx="40" cy="20" rx="8" ry="14" fill="#7aab8a" opacity=".6" transform="rotate(120 40 40)"/>
+          <ellipse cx="40" cy="20" rx="8" ry="14" fill="#7aab8a" opacity=".6" transform="rotate(180 40 40)"/>
+          <ellipse cx="40" cy="20" rx="8" ry="14" fill="#7aab8a" opacity=".6" transform="rotate(240 40 40)"/>
+          <ellipse cx="40" cy="20" rx="8" ry="14" fill="#7aab8a" opacity=".6" transform="rotate(300 40 40)"/>
+        </svg>
+      </div>
+      <div class="hero-deco hero-deco-2">
+        <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+          <circle cx="30" cy="30" r="8" fill="#2d5a3d" opacity=".4"/>
+          <ellipse cx="30" cy="14" rx="6" ry="10" fill="#4a7c5f" opacity=".5" transform="rotate(0 30 30)"/>
+          <ellipse cx="30" cy="14" rx="6" ry="10" fill="#4a7c5f" opacity=".5" transform="rotate(90 30 30)"/>
+          <ellipse cx="30" cy="14" rx="6" ry="10" fill="#4a7c5f" opacity=".5" transform="rotate(180 30 30)"/>
+          <ellipse cx="30" cy="14" rx="6" ry="10" fill="#4a7c5f" opacity=".5" transform="rotate(270 30 30)"/>
+        </svg>
+      </div>
+         <img src="{% static 'main/img/Gemini_Generated_Image_is0uleis0uleis0u (1).png' %}" alt="Фото" style="max-width: 100%; max-height: 100%; object-fit: cover; object-position: center;margin-top: 100px">
+
+      <div class="hero-badge">
+        <div class="badge-emoji"><span class="material-symbols-outlined">
+spa
+</span></div>
+        <div>
+          <div class="badge-title">Доставка за 2 години</div>
+          <div class="badge-sub">По всьому місту</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="categories" aria-hidden="true">
+    <div class="cat-track">
+      <div class="cat-item"><span>🌹</span>Троянди<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>🌷</span>Тюльпани<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>🌻</span>Соняшники<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>💐</span>Букети<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>🌸</span>Сакура<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>🌺</span>Орхідеї<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>🌼</span>Ромашки<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>🪷</span>Піони<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>🌹</span>Троянди<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>🌷</span>Тюльпани<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>🌻</span>Соняшники<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>💐</span>Букети<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>🌸</span>Сакура<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>🌺</span>Орхідеї<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>🌼</span>Ромашки<div class="cat-dot"></div></div>
+      <div class="cat-item"><span>🪷</span>Піони<div class="cat-dot"></div></div>
+    </div>
+  </div>
+
+  <!-- ══ FEATURED ══ -->
+  <section class="featured" id="featured">
+    <div class="container">
+      <div class="featured-head">
+        <div>
+          <div class="section-label">Популярне</div>
+          <h2 class="section-title">Наші <em>бестселери</em></h2>
+        </div>
+
+      </div>
+
+      <div class="products-grid">
+        <!-- Card 1 -->
+          {% for g in goods %}
+              <a href="{% url 'good-detail' g.slug %} " style="text-decoration: none">
+        <div class="product-card">
+          <div class="card-img">
+            <img src="{{ g.img.url }}" alt="Фото" style="width: 100%; height: 100%; object-fit: cover; justify-content: center">
+            <div class="card-img-overlay"></div>
+            <div class="card-badge">Хіт</div>
+          </div>
+          <div class="card-body">
+            <div class="card-name">{{ g.product.title }} {{ g.color.name|slice:":1" }}</div>
+            <div class="card-desc">{{ g.product.short_descr }}</div>
+            <div class="card-footer">
+              <div class="card-price">{{ g.price }} <span>грн</span></div>
+              <form action="{% url 'bin' g.slug %}" method="POST" class="add-to-cart-form">
+    {% csrf_token %}
+              <button class="btn-cart" type="submit">В кошик</button>
+              </form>
+            </div>
+          </div>
+        </div>
+              </a>
+        {% endfor %}
+
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:48px;">
+        <a href="{% url 'ready' %}" class="btn-outline" style="padding:14px 40px;font-size:14px;">Переглянути весь каталог</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ABOUT ══ -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-visual">
+
+          <div class="about-img-wrap" ><img src="{% static 'main/img/Gemini_Generated_Image_d8g815d8g815d8g8 (1).png' %}" alt="" style="height: 50%; width: 100%; object-fit: cover; object-position: right ; padding-right: 50px"></div>
+          <div class="about-img-card">
+
+            <strong>2016</strong>
+            <p>Рік заснування</p>
+          </div>
+        </div>
+
+        <div class="about-text">
+          <div class="section-label">Наша історія</div>
+          <h2 class="section-title">Любов до квітів<br><em>з перших днів</em></h2>
+          <p class="section-sub" style="margin-bottom:24px;">
+            Ми розпочали з невеличкого кіоску на вулиці та мрії створювати 
+            неповторні квіткові композиції. Сьогодні — це простора студія 
+            з командою досвідчених флористів.
+          </p>
+          <p class="section-sub">
+            Кожен букет — це маленький витвір мистецтва, створений з увагою 
+            до деталей та щирою любов'ю до природи.
+          </p>
+
+          <div class="about-features">
+            <div class="feature-item">
+              <div class="feature-icon"><span class="material-symbols-outlined" style="font-size: 34px">deceased</span></div>
+              <div class="feature-title">Свіжі квіти</div>
+              <div class="feature-desc">Щодня доставка з ферм та оранжерей</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon"><i class="fa-solid fa-car-side"></i></div>
+              <div class="feature-title">Швидка доставка</div>
+              <div class="feature-desc">За 2 години по місту</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon"><i class="fa-solid fa-palette"></i></div>
+              <div class="feature-title">Авторський дизайн</div>
+              <div class="feature-desc">Унікальні композиції на замовлення</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon"><i class="fa-solid fa-envelope-open"></i></div>
+              <div class="feature-title">З листівкою</div>
+              <div class="feature-desc">Персональне побажання в подарунок</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SERVICES ══ -->
+  <section class="services" id="services">
+    <div class="container">
+      <div style="max-width:560px;">
+        <div class="section-label">Що ми пропонуємо</div>
+        <h2 class="section-title">Послуги для<br><em>кожного випадку</em></h2>
+        <p class="section-sub">Від романтичних букетів до оформлення весіль — ми подбаємо про кожну деталь.</p>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-num">01</div>
+          <div class="service-icon"><span class="material-symbols-outlined" style="font-size: 34px">local_florist</span></div>
+          <div class="service-title">Авторські букети</div>
+          <div class="service-desc">Унікальні композиції, створені нашими флористами спеціально для вас або ваших близьких.</div>
+        </div>
+        <div class="service-card">
+          <div class="service-num">02</div>
+          <div class="service-icon"><span class="material-symbols-outlined" style="font-size: 34px">church</span></div>
+          <div class="service-title">Весільне оформлення</div>
+          <div class="service-desc">Повне квіткове оформлення весіль: від букета нареченої до декору зали.</div>
+        </div>
+        <div class="service-card">
+          <div class="service-num">03</div>
+          <div class="service-icon"><span class="material-symbols-outlined" style="font-size: 34px">work</span></div>
+          <div class="service-title">Корпоративне замовлення</div>
+          <div class="service-desc">Регулярна підписка на свіжі квіти для офісів, готелів та ресторанів.</div>
+        </div>
+        <div class="service-card">
+          <div class="service-num">04</div>
+          <div class="service-icon"><span class="material-symbols-outlined" style="font-size: 34px">featured_seasonal_and_gifts</span></div>
+          <div class="service-title">Подарункові набори</div>
+          <div class="service-desc">Квіти разом із шоколадом, іграшками або листівками — ідеальний подарунок.</div>
+        </div>
+        <div class="service-card">
+          <div class="service-num">05</div>
+          <div class="service-icon"><span class="material-symbols-outlined" style="font-size: 34px">potted_plant</span></div>
+          <div class="service-title">Кімнатні рослини</div>
+          <div class="service-desc">Великий вибір горщикових рослин і суккулентів для дому чи офісу.</div>
+        </div>
+        <div class="service-card">
+          <div class="service-num">06</div>
+          <div class="service-icon"><span class="material-symbols-outlined" style="font-size: 34px">
+collections_bookmark
+</span></div>
+          <div class="service-title">Майстер-класи</div>
+          <div class="service-desc">Навчіться мистецтву флористики на наших регулярних практичних заняттях.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ TESTIMONIALS ══ -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="testimonials-header">
+        <div class="section-label">Відгуки</div>
+        <h2 class="section-title" style="max-width:460px;margin:0 auto 12px;">Що кажуть<br>наші <em>клієнти</em></h2>
+      </div>
+
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">«Замовляла букет на день народження мами. Флористи зробили щось неймовірно красиве — мама плакала від щастя!»</div>
+          <div class="review-author">
+            <div class="review-avatar">👩</div>
+            <div>
+              <div class="review-name">Оксана Петренко</div>
+              <div class="review-loc">Київ</div>
+            </div>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">«Вже третє весілля замовляємо оформлення тут. Команда завжди перевершує очікування. Краса та професіоналізм!»</div>
+          <div class="review-author">
+            <div class="review-avatar">👨</div>
+            <div>
+              <div class="review-name">Андрій Коваленко</div>
+              <div class="review-loc">Харків</div>
+            </div>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">«Купую підписку на офіс уже рік. Квіти завжди свіжі, доставляють вчасно, а атмосфера в офісі стала зовсім іншою.»</div>
+          <div class="review-author">
+            <div class="review-avatar">👩‍💼</div>
+            <div>
+              <div class="review-name">Марина Іваненко</div>
+              <div class="review-loc">Одеса</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ NEWSLETTER ══ -->
+  <section class="newsletter" id="contact">
+    <div class="container">
+      <div class="newsletter-inner">
+        <div class="newsletter-text">
+          <div class="section-label">Будьте в курсі</div>
+          <h2 class="section-title" style="color:#fff;">Підпишіться на<br><em style="color:var(--green-soft);">новини та знижки</em></h2>
+          <p class="section-sub">Отримуйте ексклюзивні пропозиції, поради флористів та перші новини про сезонні колекції.</p>
+        </div>
+        <div class="newsletter-form">
+          <div class="form-row">
+            <form action="{% url 'add_sub' %}" method="post">
+              {% csrf_token %}
+            <input class="form-input" type="email" name="email" placeholder="Ваш email..." />
+            <button class="btn-submit" type="submit">Підписатись</button>
+              </form>
+          </div>
+          <div class="form-note">Без спаму.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
+

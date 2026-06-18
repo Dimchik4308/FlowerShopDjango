@@ -1,0 +1,107 @@
+<style>
+    /* Контейнер для сторінки скасування */
+    .cancel-container {
+        max-width: 600px;
+        margin: 60px auto;
+        text-align: center;
+        background: #ffffff;
+        padding: 50px 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f0f0f0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Емодзі або іконка */
+    .cancel-icon {
+        font-size: 72px;
+        margin-bottom: 20px;
+        line-height: 1;
+    }
+
+    /* Заголовки та текст */
+    .cancel-title {
+        color: #111827;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .cancel-text {
+        color: #4b5563;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 35px;
+    }
+
+    .cancel-text strong {
+        color: #111827;
+    }
+
+    /* Кнопки дій */
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 14px 28px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn-primary {
+        background-color: #635bff; /* Колір як на кнопці оплати Stripe */
+        color: #ffffff;
+        border: 2px solid #635bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #4b45c6;
+        border-color: #4b45c6;
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background-color: #ffffff;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+    }
+
+    .btn-secondary:hover {
+        background-color: #f9fafb;
+        border-color: #d1d5db;
+        transform: translateY(-2px);
+    }
+
+    /* Адаптивність для телефонів */
+    @media (max-width: 480px) {
+        .action-buttons {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="cancel-container">
+    <div class="cancel-icon">🥀</div>
+    <h2 class="cancel-title">Оплата скасована або перервана</h2>
+    <p class="cancel-text">
+        Ви закрили сторінку оплати, але не хвилюйтеся — <strong>ми зберегли ваше замовлення!</strong><br>
+        Ваші квіти все ще чекають на вас. Ви можете завершити оплату пізніше в особистому кабінеті, коли вам буде зручно.
+    </p>
+
+    <div class="action-buttons">
+        <a href="{% url 'my_orders' %}" class="btn btn-primary">Повернутися до замовлень</a>
+
+        <a href="/" class="btn btn-secondary">На головну сторінку</a>
+    </div>
+</div>

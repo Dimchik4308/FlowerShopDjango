@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %} {% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+    <script src="{% static 'main/js/scripts.js' %}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+<button id="chat-toggle-btn" style="position: fixed; bottom: 20px; right: 20px; background: #335c43; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 24px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000;">
+    <i class="fa-regular fa-comment-dots"></i>
+</button>
+
+<div id="chat-window" style="display: none; position: fixed; bottom: 90px; right: 20px; width: 350px; height: 500px; background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); flex-direction: column; z-index: 1000; overflow: hidden;">
+
+    <div style="background: #335c43; color: white; padding: 15px; font-weight: bold; text-align: center;">
+        Флорист ШІ 🌿
+    </div>
+
+    <div id="chat-messages" style="flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f9f9f9;">
+        <div style="background: #e3efe7; padding: 10px; border-radius: 10px; align-self: flex-start; max-width: 80%;">
+            Привіт! Я ваш персональний ШІ-флорист. Який букет шукаєте?
+        </div>
+    </div>
+
+    <div style="display: flex; border-top: 1px solid #ddd; padding: 10px; background: white;">
+        <input type="text" id="chat-input" placeholder="Напишіть повідомлення..." style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 20px; outline: none;">
+        <button id="chat-send-btn" style="background: #335c43; color: white; border: none; padding: 10px 15px; margin-left: 10px; border-radius: 20px; cursor: pointer;">
+            Відправити
+        </button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const searchBtn = document.getElementById('searchToggleBtn');
+    const searchDropdown = document.getElementById('searchDropdown');
+
+    if (searchBtn && searchDropdown) {
+        // Відкриваємо/закриваємо пошук при кліку на іконку
+        searchBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Зупиняємо клік, щоб він не спрацював на `document`
+            searchDropdown.classList.toggle('active');
+
+            // Якщо відкрили - ставимо фокус на поле введення
+            if (searchDropdown.classList.contains('active')) {
+                searchDropdown.querySelector('.search-input').focus();
+            }
+        });
+
+        // Закриваємо пошук, якщо клікнули поза ним
+        document.addEventListener('click', function(e) {
+            if (!searchDropdown.contains(e.target) && e.target !== searchBtn) {
+                searchDropdown.classList.remove('active');
+            }
+        });
+
+        // Щоб клік всередині самої форми не закривав її
+        searchDropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+});
+    const chatToggle = document.getElementById('chat-toggle-btn');
+    const chatWindow = document.getElementById('chat-window');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const chatSendBtn = document.getElementById('chat-send-btn');
+
+    chatToggle.addEventListener('click', () => {
+        chatWindow.style.display = chatWindow.style.display === 'none' ? 'flex' : 'none';
+    });
+
+    function appendMessage(text, isUser) {
+        const msgDiv = document.createElement('div');
+        msgDiv.style.padding = '10px';
+        msgDiv.style.borderRadius = '10px';
+        msgDiv.style.maxWidth = '80%';
+        msgDiv.style.marginBottom = '10px';
+
+        const textWithLinks = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" style="color: #0056b3; text-decoration: underline;">$1</a>');
+        msgDiv.innerHTML = textWithLinks;
+
+        if (isUser) {
+            msgDiv.style.background = '#335c43';
+            msgDiv.style.color = 'white';
+            msgDiv.style.alignSelf = 'flex-end';
+        } else {
+            msgDiv.style.background = '#e3efe7';
+            msgDiv.style.color = 'black';
+            msgDiv.style.alignSelf = 'flex-start';
+        }
+
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight; // Скролимо вниз
+    }
+
+    async function sendMessage() {
+        const text = chatInput.value.trim();
+        if (!text) return;
+
+        appendMessage(text, true);
+        chatInput.value = '';
+
+      const typingDiv = document.createElement('div');
+        typingDiv.innerText = "Флорист думає...";
+        typingDiv.style.fontSize = "12px";
+        typingDiv.style.color = "gray";
+        chatMessages.appendChild(typingDiv);
+
+        try {
+            const response = await fetch('/api/chat/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+            const data = await response.json();
+
+            chatMessages.removeChild(typingDiv);
+            appendMessage(data.reply, false);
+
+        } catch (error) {
+            chatMessages.removeChild(typingDiv);
+            appendMessage("Помилка з'єднання з сервером.", false);
+        }
+    }
+
+    chatSendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+    function appendMessage(text, isUser) {
+        const msgDiv = document.createElement('div');
+        msgDiv.style.padding = '10px';
+        msgDiv.style.borderRadius = '10px';
+        msgDiv.style.maxWidth = '85%';
+        msgDiv.style.marginBottom = '10px';
+        msgDiv.style.wordWrap = 'break-word';
+
+        let formattedText = text.replace(/\[WIDGET:\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\]/g, function(match, img, link, title) {
+            let imgSrc = img.trim() ? img.trim() : 'https://via.placeholder.com/200x200?text=Немає+фото';
+
+            return `
+            <a href="${link.trim()}" style="display: block; text-decoration: none; color: inherit; border: 1px solid #c9d9cf; border-radius: 12px; overflow: hidden; margin-top: 10px; margin-bottom: 10px; background: white; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <!-- ФОТКА -->
+                <img src="${imgSrc}" style="width: 100%; height: 180px; object-fit: cover; display: block;" alt="${title.trim()}">
+
+                <!-- НИЖНЯ ПАНЕЛЬКА КАРТКИ -->
+                <div style="padding: 12px; text-align: center;">
+                    <div style="font-weight: bold; color: #335c43; font-size: 14px; margin-bottom: 8px;">${title.trim()}</div>
+                    <div style="font-size: 12px; font-weight: bold; color: white; background: #335c43; padding: 6px 12px; border-radius: 20px; display: inline-block;">
+                        Переглянути товар ➔
+                    </div>
+                </div>
+            </a>`;
+        });
+
+        formattedText = formattedText.replace(/(?<!href=")(https?:\/\/[^\s]+)(?!")/g, '<a href="$1" style="color: #0056b3; text-decoration: underline;">$1</a>');
+
+        msgDiv.innerHTML = formattedText;
+
+        if (isUser) {
+            msgDiv.style.background = '#335c43';
+            msgDiv.style.color = 'white';
+            msgDiv.style.alignSelf = 'flex-end';
+        } else {
+            msgDiv.style.background = '#e3efe7';
+            msgDiv.style.color = 'black';
+            msgDiv.style.alignSelf = 'flex-start';
+        }
+
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+</script>
+<body>
+
+  <header>
+    <nav>
+      <a href="{% url 'main_home' %}" class="logo">
+        <div class="logo-icon">🌿</div>
+        <span class="logo-text">Petal & Bloom</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="{% url 'main_home' %}#featured">Каталог</a></li>
+        <li><a href="{% url 'main_home' %}#services">Послуги</a></li>
+        <li><a href="{% url 'main_home' %}#about">Про нас</a></li>
+        <li><a href="{% url 'main_home' %}#contact">Контакти</a></li>
+
+      </ul>
+
+      <div class="nav-actions">
+      {% url 'custom' as custom %}
+      {% url 'ready' as ready %}
+          {% url 'additions' as additions_url %}
+          {% if request.path == custom %}
+        <div class="search-wrapper">
+    <button type="button" class="btn-icon header-search-icon" id="searchToggleBtn" aria-label="Пошук">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+
+    <form action="{% url 'custom' %}" method="GET" class="search-dropdown" id="searchDropdown">
+        <input type="text" name="q" class="search-input" placeholder="Знайти ідеальний букет..." required>
+        <button type="submit" class="search-submit-btn">Шукати</button>
+    </form>
+</div>
+          {% elif request.path == ready %}
+          <div class="search-wrapper">
+    <button type="button" class="btn-icon header-search-icon" id="searchToggleBtn" aria-label="Пошук">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+
+    <form action="{% url 'ready' %}" method="GET" class="search-dropdown" id="searchDropdown">
+        <input type="text" name="q" class="search-input" placeholder="Знайти ідеальний букет..." required>
+        <button type="submit" class="search-submit-btn">Шукати</button>
+    </form>
+</div>
+          {% elif request.path == additions_url %}
+          <div class="search-wrapper">
+    <button type="button" class="btn-icon header-search-icon" id="searchToggleBtn" aria-label="Пошук">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+
+    <form action="{% url 'additions' %}" method="GET" class="search-dropdown" id="searchDropdown">
+        <input type="text" name="q" class="search-input" placeholder="Знайти ідеальний букет..." required>
+        <button type="submit" class="search-submit-btn">Шукати</button>
+    </form>
+</div>
+          {% endif %}
+        <div class="cart-dropdown-wrapper">
+
+    <a href="" class="header-cart-icon">
+    <i class="fa-solid fa-cart-shopping"></i>
+        <span class="cart-badge">{{ cart_count }}</span>
+    </a>
+
+    <div class="cart-dropdown-menu">
+    <div class="cart-dropdown-header">
+        <h4>Кошик</h4>
+        <span>{{ cart_count }} товарів</span>
+    </div>
+
+    <div class="cart-dropdown-items">
+        {% for good in cart_goods %}
+            <div class="cart-item">
+                <div class="cart-item-img" style="background-color: #f0f4f2;">
+                    <img src="{{ good.product.img.url }}" alt="" style="width: 100%; height: 100%; border-radius: 12px; object-fit: cover;">
+                </div>
+                <div class="cart-item-info">
+                    <a href="{% url 'good-detail' good.product.slug %}" class="cart-item-title">{{ good.product.product.title }} {{ good.product.color.name }}</a>
+                    <div class="cart-item-price-qty">
+                        <span class="cart-item-price">{{ good.product.price }} грн</span>
+                        <span class="cart-item-qty">x {{ good.quantity }}</span>
+                    </div>
+                </div>
+                <form action="{% url 'remove_from_cart' good.id %}" method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="cart-item-remove" title="Видалити">×</button>
+                </form>
+            </div>
+        {% empty %}
+            <div class="cart-empty-state">
+                <div class="cart-empty-icon">🌸</div>
+                <p class="cart-empty-title">Ваш кошик порожній</p>
+                <p class="cart-empty-title">Ваш кошик порожній</p>
+                <p class="cart-empty-text">Але це легко виправити! Додайте трохи краси з нашого каталогу.</p>
+                <a href="{% url 'ready' %}" class="btn-empty-cart">Перейти до каталогу</a>
+            </div>
+        {% endfor %}
+    </div> {% if cart_goods %}
+        <div class="cart-dropdown-footer">
+            <div class="cart-dropdown-total">
+                <span>Разом:</span>
+                <strong>{{ cart_total }} грн</strong>
+            </div>
+            <a href="{% url 'checkout_cart' %}" class="btn-checkout">Оформити замовлення</a>
+        </div>
+    {% endif %}
+
+</div>
+</div>
+    <div class="header-auth-wrap">
+    {% if user.is_authenticated %}
+        <div class="user-wrap">
+            <div class="user-trigger">
+                {{ user.username }} ▾
+            </div>
+
+            <div class="user-dropdown">
+                <a href="{% url 'my_orders' %}" class="drop-item">Мої замовлення</a>
+
+                <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="drop-item logout">Вийти з акаунта</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <a href="{% url 'login' %}" class="auth-login-link">Увійти</a>
+        <a href="{% url 'register' %}" class="auth-reg-btn">Реєстрація</a>
+    {% endif %}
+</div>
+</div>
+
+    </nav>
+      {% if messages %}
+<div class="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;">
+    {% for message in messages %}
+        <div class="toast-message toast-{{ message.tags }}" style="padding: 16px 24px; border-radius: 12px; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.08); font-size: 15px; color: #1e3b2b; display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s ease forwards;">
+
+            {% if message.tags == 'error' %}
+                <span style="color: #e74c3c; font-weight: bold;">✕</span>
+            {% elif message.tags == 'success' %}
+                <span style="color: #4a7c59; font-weight: bold;">✓</span>
+            {% else %}
+                <span style="color: #f39c12; font-weight: bold;">!</span>
+            {% endif %}
+
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(function() {
+            let toasts = document.querySelectorAll('.toast-message');
+            toasts.forEach(function(toast) {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => toast.remove(), 500);
+            });
+        }, 4000);
+    });
+</script>
+
+<style>
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    /* Кольорові акценти для різних типів повідомлень */
+    .toast-success { border-left: 4px solid #4a7c59; }
+    .toast-error { border-left: 4px solid #e74c3c; }
+    .toast-warning { border-left: 4px solid #f39c12; }
+    .toast-info { border-left: 4px solid #3498db; }
+</style>
+{% endif %}
+  </header>
+<main style="padding-top:70px;">
+  {% block main %}
+
+  {% endblock %}</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-wrap">
+
+      <div class="footer-brand">
+        <a href="/" class="logo">
+          <span class="logo-icon">🌿</span>
+          <span class="logo-text">Petal & Bloom</span>
+        </a>
+        <p class="footer-desc">Ваш найкращий квітковий магазин. Свіжі квіти, авторські букети та щира увага до кожного клієнта.</p>
+      </div>
+
+      <div class="footer-contacts">
+        <h4>Контакти</h4>
+        <ul class="contact-list">
+          <li>
+            <i class="fa-solid fa-phone"></i>
+            <a href="tel:+380991234567">+38 (099) 123-45-67</a>
+          </li>
+          <li>
+            <i class="fa-solid fa-envelope"></i>
+            <a href="mailto:hello@petalbloom.ua">hello@petalbloom.ua</a>
+          </li>
+          <li>
+            <i class="fa-solid fa-location-dot"></i>
+            <span>вул. Садова, 12</span>
+          </li>
+          <li>
+            <i class="fa-solid fa-clock"></i>
+            <span>Пн–Нд: 11:00–21:00</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 Petal & Bloom. Всі права захищено.</p>
+    </div>
+  </div>
+</footer>
+</body>

@@ -1,0 +1,99 @@
+{% extends 'main/base.html' %}
+{% load static %} {% block main %}
+<div class="checkout-page">
+    <div class="container">
+        <h1 class="page-title">Оформлення замовлення</h1>
+
+        <div class="checkout-grid">
+            <div class="checkout-form-section">
+                <h3 class="section-title">Ваші дані</h3>
+
+                <form action="{{ request.path }}" method="POST" class="order-form">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="name">Ім'я</label>
+                        <input type="text" id="name" name="name" placeholder="Введіть ваше ім'я" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">Прізвище</label>
+                        <input type="text" id="last-name" name="last_name" placeholder="Введіть ваше Прізвище" minlength="2" maxlength="20" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Номер телефону</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+38 (000) 000-00-00" minlength="10" maxlength="12" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Адреса доставки</label>
+                        <input type="text" id="address" name="address" placeholder="Bулиця, будинок, квартира" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comment">Коментар до замовлення (необов'язково)</label>
+                        <textarea id="comment" name="comment" rows="3" placeholder="Особливі побажання, час доставки..." style="resize: none"></textarea>
+                    </div>
+
+                    {% if good %}
+                        <input type="hidden" name="good_id" value="{{ good.id }}">
+                        <input type="hidden" name="quantity" value="{{ quantity }}">
+                    {% endif %}
+
+                    <button type="submit" class="btn-submit-order">Підтвердити замовлення</button>
+                </form>
+            </div>
+
+            <div class="checkout-summary-section">
+                <div class="summary-card">
+                    <h3 class="section-title">Ваше замовлення</h3>
+
+                    <div class="summary-items">
+                        {% if good %}
+                        <div class="summary-item">
+                            <div class="summary-img" style="background-color: #f0f4f2;">
+                                    <img src="{{ good.img.url }}" alt="">
+                            </div>
+                            <div class="summary-info">
+                                <span class="summary-name">{{ good.product.title }} {{ good.color.name }}</span>
+                                <span class="summary-qty">{{ quantity }} шт.</span>
+                            </div>
+                            <div class="summary-price">{{ good.price }} грн</div>
+                        </div>
+
+                        {% elif cart %}
+                            {% for item in cart %}
+                            <div class="summary-item">
+                                <div class="summary-img" style="background-color: #f0f4f2;">
+                                        <img src="{{ item.product.img.url }}" alt="">
+                                </div>
+                                <div class="summary-info">
+                                    <span class="summary-name">{{ item.product.product.title }} {{ item.product.color.name }}</span>
+                                    <span class="summary-qty">{{ item.quantity }} шт.</span>
+                                </div>
+                                <div class="summary-price">
+                                    {{ item.product.price }} грн
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>Ваш кошик порожній.</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="summary-total-row">
+                        <span>До оплати:</span>
+                        <span class="total-price">
+                            {% if good %}
+                                {{ total_price }} грн
+                            {% elif cart_total %}
+                                {{ cart_total }} грн
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
