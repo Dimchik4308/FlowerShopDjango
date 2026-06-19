@@ -1,9 +1,5 @@
 .env
 db.sqlite3
-.dockerignore
-docker-compose.yml
-Dockerfile
-Modelfile
 .venv/
 venv/
 env/
@@ -13,4 +9,3 @@ __pycache__/
 media/
 .idea/
 .vscode/
-nginx

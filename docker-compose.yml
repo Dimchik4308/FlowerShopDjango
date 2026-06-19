@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: flowershop_db
+    restart: always
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+      build: .
+      container_name: flowershop_web
+      restart: always
+      command: >
+        sh -c "python manage.py migrate &&
+               python manage.py runserver 0.0.0.0:8000"
+      volumes:
+        - .:/code
+      environment:
+        - DB_HOST=db
+        - DB_NAME=${DB_NAME}
+        - DB_USER=${DB_USER}
+        - DB_PASSWORD=${DB_PASSWORD}
+        - DB_PORT=5432
+      depends_on:
+        - db
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: flowershop_nginx
+    restart: always
+    ports:
+      - "80:80" # Тепер сайт буде відкриватися просто по localhost (без порту 8000)
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf # Підкидаємо наш конфіг
+      - static_volume:/app/static # Nginx бачить ту ж саму папку
+      - media_volume:/app/media
+    depends_on:
+      - web # Nginx запуститься тільки після Django
+
+volumes:
+  static_volume:
+  media_volume:
+  postgres_data:
